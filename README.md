@@ -35,6 +35,7 @@ The system is optimized for integration into autonomous agents such as drones an
 ### Phase-Based Looping
 Each solving phase is looped until the heuristic-based goal is reached.  
 For each candidate move, the solver evaluates a cost:
+---
 
 ### 🎯 Cost Function (SECS++ Heuristic)
 ```math
@@ -50,7 +51,7 @@ E(n) = Entropy (color variation per face)
 
 a, b = Phase-specific weights
 
-
+---
 🧪 Sample Output
 
 === Scramble: ['U2', "F'", 'U', 'F2', 'D', 'F2']
@@ -70,6 +71,7 @@ D: ['D', 'D', 'D', ..., 'D']
 ...
 
 Moves to solve: ['U', 'F', 'R2', ...]
+---
 
 📁 Folder Structure
 bash
@@ -88,6 +90,7 @@ secs_cube_solver/
     ├── solver.py                # SECS++ core logic
     └── looped_phased_solver.py # 3-phase control logic
 
+---
 
 🌟 Future Additions
 Real-time camera input for color-based scrambling
@@ -97,16 +100,16 @@ Integration with drone & robotic simulation
 Advanced SECS++ with parallel beam search
 
 Web-based visualization of solving path
-
+---
 
 📚 Requirements
 Python 3.7+
 
 NumPy
-
+---
 🧠 Author
 P. Jeba Selvan Andrew
 GitHub Profile
 
-
+---
 
