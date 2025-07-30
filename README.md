@@ -40,6 +40,7 @@ For each candidate move, the solver evaluates a cost:
 ```math
 F(n) = a ⋅ H_{diff}(n) + b ⋅ E(n)
 
+```
 
 Where:
 
@@ -49,7 +50,7 @@ E(n) = Entropy (color variation per face)
 
 a, b = Phase-specific weights
 
-```
+
 🧪 Sample Output
 
 === Scramble: ['U2', "F'", 'U', 'F2', 'D', 'F2']
