@@ -1,63 +1,58 @@
-import random
 
-FACES = ['U', 'D', 'F', 'B', 'L', 'R']
-MOVES = [f + suf for f in FACES for suf in ['', "'", '2']]
+import random
+from secs.moves import apply_move_to_state
+from secs.cube_state import CubeState
+
 
 def default_candidate_moves():
-    return MOVES.copy()
 
-def print_cube(flat_cube):
-    for face in FACES:
-        face_values = [flat_cube[f"{face}{i}"] for i in range(9)]
-        print(f"{face}: {face_values}")
-
-def generate_scramble(n=6):
-    return [random.choice(MOVES) for _ in range(n)]
-
-def apply_scramble(cube, scramble, apply_move_func):
-    for move in scramble:
-        cube.state = apply_move_func({"cube": cube.state}, move)["cube"]
-    return cube
-
-
-def is_cube_solved(cube):
-    for face in FACES:
-        center = cube[f"{face}4"]
-        if not all(cube[f"{face}{i}"] == center for i in range(9)):
-            return False
-    return True
+    return ["U", "U'", "U2", "D", "D'", "D2", "L", "L'", "L2", 
+            "R", "R'", "R2", "F", "F'", "F2", "B", "B'", "B2"]
 
 def goal_reached(state, phase):
+
     cube = state["cube"]
+    goal_cube = CubeState().get_solved_state() 
+
+    phase = phase.lower() 
+
     if phase == "cross":
-        return count_cross_edges(cube) == 4
-    elif phase == "f2l":
-        return count_f2l_pairs(cube) == 4
-    elif phase == "last":
-        return count_solved_faces(cube) >= 6
-    else:
-        return is_cube_solved(cube)
 
-def heuristic_diff(cube):
-    count = 0
-    for face in FACES:
-        center = cube[f"{face}4"]
-        count += sum(1 for i in range(9) if cube[f"{face}{i}"] != center)
-    return count
+        cross_stickers = ['D1', 'D3', 'D5', 'D7', 'F7', 'L7', 'R7', 'B7']
+        for sticker in cross_stickers:
+            if cube.get(sticker) != goal_cube.get(sticker):
+                return False
+        return True
 
-def entropy_scalar(cube):
-    return sum(len(set(cube[f"{face}{i}"] for i in range(9))) for face in FACES)
+    if phase == "f2l":
 
-def count_cross_edges(cube):
-    center = cube["U4"]
-    indices = ["U1", "U3", "U5", "U7"]
-    return sum(1 for idx in indices if cube[idx] == center)
+        first_two_layers_stickers = [
+            'D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8',
+            'F3', 'F5', 'F6', 'F8', 'R3', 'R5', 'R6', 'R8',
+            'B3', 'B5', 'B6', 'B8', 'L3', 'L5', 'L6', 'L8'
+        ]
+        for sticker in first_two_layers_stickers:
+            if cube.get(sticker) != goal_cube.get(sticker):
+                return False
+        return True
+        
+    if phase == "last_layer":
 
-def count_f2l_pairs(cube):
-    return sum(1 for f in ['F', 'R', 'L', 'B'] if cube[f + '6'] == cube[f + '4'])
+        for sticker_key in goal_cube:
+            if cube.get(sticker_key) != goal_cube.get(sticker_key):
+                return False
+        return True
 
-def count_solved_faces(cube):
-    return sum(
-        all(cube[f"{face}{i}"] == cube[f"{face}4"] for i in range(9))
-        for face in FACES
-    )
+    return False
+
+
+def apply_scramble(cube_state, moves):
+    """Applies a series of moves to a CubeState object."""
+    current_cube_dict = dict(cube_state.state)
+    for move in moves:
+        current_cube_dict = apply_move_to_state(current_cube_dict, move)
+    return {"cube": current_cube_dict}
+
+def generate_scramble(n=15):
+    """Generates a random scramble sequence."""
+    return [random.choice(default_candidate_moves()) for _ in range(n)]

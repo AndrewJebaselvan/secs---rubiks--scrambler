@@ -1,38 +1,42 @@
+
+from secs.utils import generate_scramble, apply_scramble
 from secs.cube_state import CubeState
-from secs.utils import print_cube, apply_scramble, generate_scramble
-from secs.moves import apply_move_to_state
 from secs.looped_phased_solver import looped_phased_solve
 
 def main():
-    # Ask for user input
-    raw_input = input("Enter scramble moves separated by space (or press Enter for random scramble): ").strip()
+
+
+    scramble_input = input("Enter scramble moves separated by space (or press Enter for random scramble): ").strip()
     
-    # Parse scramble
-    if raw_input:
-        scramble = raw_input.split()
+
+
+    if scramble_input:
+        scramble = scramble_input.split()
     else:
-        scramble = generate_scramble(6)
+        scramble = generate_scramble(n=15) 
+        
 
-    print(f"\n=== Scramble: {scramble} ===\n")
+    print(f"\n=== Scramble: {' '.join(scramble)} ===")
 
-    # Create initial cube
+
     cube = CubeState()
-    
-    # Apply scramble
-    apply_scramble(cube, scramble, apply_move_to_state)
+    scrambled_state = apply_scramble(cube, scramble)
 
-    print("--- Scrambled Cube State ---")
-    print_cube(cube.state)
 
-    # Solve using looped SECS++
-    print("\n=== PHASE: CROSS ===")
-    result = looped_phased_solve({"cube": cube.state})
 
-    # Print solved cube
-    print("\n✅ Solved Cube State:")
-    print_cube(cube.state)
+    print("\n--- Scrambled Cube State ---")
+    for face in "UDFBLR":
 
-    print(f"\nMoves to solve: {result}")
+        sticker_colors = [scrambled_state['cube'].get(f'{face}{i}', '?') for i in range(9)]
+        print(f"{face}: {sticker_colors}")
+
+
+    solution_moves = looped_phased_solve(scrambled_state)
+
+
+    print("\n=== SOLUTION FOUND ===")
+    print(f"Solved in {len(solution_moves)} moves:")
+    print(' '.join(solution_moves))
 
 if __name__ == "__main__":
     main()
