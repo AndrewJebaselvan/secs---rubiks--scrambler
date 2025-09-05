@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=D:\secs_cube_solver\virt
+set VIRTUAL_ENV=D:\New folder\secs_cube_solver\virt
 
 if not defined PROMPT set PROMPT=$P$G
 
